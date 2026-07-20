@@ -1,6 +1,6 @@
 # 28 — Timeline候補
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 9
 Labels: ready-for-agent, phase-9, toggl-parity, privacy

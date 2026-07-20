@@ -1,6 +1,6 @@
 # 25 — Toggl parity: labor costs/profitability/workload/rounding
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 8
 Labels: ready-for-agent, phase-8, toggl-parity

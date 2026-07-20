@@ -1,6 +1,6 @@
 # 23 — Toggl parity: Time Off
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 8
 Labels: ready-for-agent, phase-8, toggl-parity

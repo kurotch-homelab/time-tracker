@@ -1,6 +1,6 @@
 # 11 — フィルタ・検索・エクスポート・一括整理
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 2
 Labels: ready-for-agent, phase-2, reporting

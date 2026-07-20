@@ -1,6 +1,6 @@
 # 24 — Toggl parity: tasks/templates/recurring/fixed fee
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 8
 Labels: ready-for-agent, phase-8, toggl-parity

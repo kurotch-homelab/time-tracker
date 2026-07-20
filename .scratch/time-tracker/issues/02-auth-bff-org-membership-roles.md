@@ -1,6 +1,6 @@
 # 02 — Webセッション, Org, Membership, roles
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 0
 Labels: ready-for-agent, phase-0, auth

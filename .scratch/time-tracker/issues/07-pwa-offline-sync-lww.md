@@ -1,6 +1,6 @@
 # 07 — PWA オフライン同期と LWW
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 1
 Labels: ready-for-agent, phase-1, offline-sync

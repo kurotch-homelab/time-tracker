@@ -1,6 +1,6 @@
 # 09 — 稼働レコード CSV インポート
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 1
 Labels: ready-for-agent, phase-1, import

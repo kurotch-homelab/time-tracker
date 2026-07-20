@@ -1,6 +1,6 @@
 # 14 — 通知・リマインダー・アラート
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 4
 Labels: ready-for-agent, phase-4, notifications

@@ -1,6 +1,6 @@
 # 21 — Toggl parity: required fields, locks, audits, add time for team
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 8
 Labels: ready-for-agent, phase-8, toggl-parity

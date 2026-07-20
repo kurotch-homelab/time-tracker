@@ -1,6 +1,6 @@
 # 10 — レポート基盤と KPI ダッシュボード
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 2
 Labels: ready-for-agent, phase-2, reporting

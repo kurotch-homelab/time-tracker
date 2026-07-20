@@ -1,6 +1,6 @@
 # 13 — 請求プレビュー・レート・経費
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 3
 Labels: ready-for-agent, phase-3, billing

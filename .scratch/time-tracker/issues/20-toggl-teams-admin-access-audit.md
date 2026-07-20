@@ -1,6 +1,6 @@
 # 20 — Toggl parity: teams/admin/access/audit
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 8
 Labels: ready-for-agent, phase-8, toggl-parity

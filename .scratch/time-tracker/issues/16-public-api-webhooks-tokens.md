@@ -1,6 +1,6 @@
 # 16 — 公開 API・Webhook・外部連携トークン
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 5
 Labels: ready-for-agent, phase-5, api

@@ -1,6 +1,6 @@
 # 01 — CI and local quality gate
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 0
 Labels: ready-for-agent, phase-0, tdd, tooling

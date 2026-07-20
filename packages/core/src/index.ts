@@ -1,3 +1,28 @@
+export * from "./access.js";
+export * from "./time-entry-management.js";
+export * from "./offline-sync.js";
+export * from "./unclassified-project.js";
+export * from "./csv-import.js";
+export * from "./reporting.js";
+export * from "./time-entry-operations.js";
+export * from "./forecast.js";
+export * from "./billing.js";
+export * from "./notifications.js";
+export * from "./freee.js";
+export * from "./public-api.js";
+export * from "./integrations.js";
+export * from "./teams.js";
+export * from "./governance.js";
+export * from "./timesheets.js";
+export * from "./time-off.js";
+export * from "./project-planning.js";
+export * from "./profitability.js";
+export * from "./custom-reports.js";
+export * from "./timeline.js";
+export * from "./browser-extension.js";
+export * from "./connectors.js";
+export * from "./insights.js";
+
 interface ManualTimeEntryBaseInput {
   readonly id: string;
   readonly userId: string;
@@ -28,10 +53,18 @@ export interface TimeEntry {
   readonly id: string;
   readonly userId: string;
   readonly projectId: string;
+  readonly activityTypeId?: string;
+  readonly memo?: string;
+  readonly tagIds?: readonly string[];
+  readonly billable?: boolean;
+  readonly referenceUrls?: readonly string[];
+  readonly updatedAt?: Date;
+  readonly deletedAt?: Date;
+  readonly lockedAt?: Date;
   readonly startAt: Date;
   readonly endAt: Date;
   readonly durationMinutes: number;
-  readonly source: "manual";
+  readonly source: "manual" | "timer" | "timeline";
 }
 
 export interface TimeEntryRepository {
@@ -128,6 +161,181 @@ export function createManualTimeEntry(
   };
 }
 
+export interface ActiveTimer {
+  readonly id: string;
+  readonly userId: string;
+  readonly projectId: string;
+  readonly startAt: Date;
+  readonly activityTypeId?: string;
+  readonly memo?: string;
+  readonly referenceUrl?: string;
+  readonly pageTitle?: string;
+}
+
+export interface StartActiveTimerInput {
+  readonly id: string;
+  readonly userId: string;
+  readonly projectId: string;
+  readonly startAt: Date;
+  readonly activityTypeId?: string;
+  readonly memo?: string;
+  readonly referenceUrl?: string;
+  readonly pageTitle?: string;
+}
+
+export interface UpdateActiveTimerInput {
+  readonly userId: string;
+  readonly projectId?: string;
+  readonly activityTypeId?: string;
+  readonly memo?: string;
+  readonly referenceUrl?: string;
+  readonly pageTitle?: string;
+}
+
+export interface StopActiveTimerInput {
+  readonly userId: string;
+  readonly endAt: Date;
+}
+
+export interface ResumeTimeEntryInput {
+  readonly id: string;
+  readonly timeEntryId: string;
+  readonly startAt: Date;
+}
+
+export type IdleTimeDecision = "discard" | "count";
+
+export interface ResolveIdleTimeInput {
+  readonly userId: string;
+  readonly idleStartedAt: Date;
+  readonly resolvedAt: Date;
+  readonly decision: IdleTimeDecision;
+}
+
+export interface ActiveTimerRepository {
+  findForUser(userId: string): ActiveTimer | undefined;
+  save(timer: ActiveTimer): ActiveTimer;
+  deleteForUser(userId: string): void;
+}
+
+export class ActiveTimerStore implements ActiveTimerRepository {
+  readonly #timersByUserId = new Map<string, ActiveTimer>();
+
+  findForUser(userId: string): ActiveTimer | undefined {
+    return this.#timersByUserId.get(userId);
+  }
+
+  save(timer: ActiveTimer): ActiveTimer {
+    this.#timersByUserId.set(timer.userId, timer);
+    return timer;
+  }
+
+  deleteForUser(userId: string): void {
+    this.#timersByUserId.delete(userId);
+  }
+}
+
+export interface ActiveTimerService {
+  start(input: StartActiveTimerInput): ActiveTimer;
+  update(input: UpdateActiveTimerInput): ActiveTimer;
+  stop(input: StopActiveTimerInput): TimeEntry;
+  resume(input: ResumeTimeEntryInput): ActiveTimer;
+  resolveIdle(input: ResolveIdleTimeInput): TimeEntry;
+  getForUser(userId: string): ActiveTimer | undefined;
+}
+
+export function createActiveTimerService(
+  timeEntries: TimeEntryRepository = new TimeEntryStore(),
+  activeTimers: ActiveTimerRepository = new ActiveTimerStore(),
+): ActiveTimerService {
+  const start = (input: StartActiveTimerInput): ActiveTimer => {
+    const previousTimer = activeTimers.findForUser(input.userId);
+    if (previousTimer) {
+      timeEntries.save(finalizeActiveTimer(previousTimer, input.startAt));
+    }
+
+    return activeTimers.save({ ...input });
+  };
+
+  const stop = (input: StopActiveTimerInput): TimeEntry => {
+    const timer = activeTimers.findForUser(input.userId);
+    if (!timer) {
+      throw new Error("active timer was not found");
+    }
+
+    const entry = finalizeActiveTimer(timer, input.endAt);
+    timeEntries.save(entry);
+    activeTimers.deleteForUser(input.userId);
+    return entry;
+  };
+
+  return {
+    start,
+
+    update(input: UpdateActiveTimerInput): ActiveTimer {
+      const timer = activeTimers.findForUser(input.userId);
+      if (!timer) {
+        throw new Error("active timer was not found");
+      }
+
+      const { userId: _userId, ...changes } = input;
+      return activeTimers.save({ ...timer, ...changes });
+    },
+
+    stop,
+
+    resume(input: ResumeTimeEntryInput): ActiveTimer {
+      const entry = timeEntries.findById(input.timeEntryId);
+      if (!entry) {
+        throw new Error("time entry was not found");
+      }
+
+      return start({
+        id: input.id,
+        userId: entry.userId,
+        projectId: entry.projectId,
+        ...(entry.activityTypeId === undefined
+          ? {}
+          : { activityTypeId: entry.activityTypeId }),
+        ...(entry.memo === undefined ? {} : { memo: entry.memo }),
+        startAt: input.startAt,
+      });
+    },
+
+    resolveIdle(input: ResolveIdleTimeInput): TimeEntry {
+      const endAt =
+        input.decision === "discard" ? input.idleStartedAt : input.resolvedAt;
+      return stop({ userId: input.userId, endAt });
+    },
+
+    getForUser(userId: string): ActiveTimer | undefined {
+      return activeTimers.findForUser(userId);
+    },
+  };
+}
+
+function finalizeActiveTimer(timer: ActiveTimer, endAt: Date): TimeEntry {
+  const durationMinutes = (endAt.getTime() - timer.startAt.getTime()) / 60_000;
+  if (durationMinutes <= 0) {
+    throw new Error("active timer must run for a positive duration");
+  }
+
+  return {
+    id: timer.id,
+    userId: timer.userId,
+    projectId: timer.projectId,
+    ...(timer.activityTypeId === undefined
+      ? {}
+      : { activityTypeId: timer.activityTypeId }),
+    ...(timer.memo === undefined ? {} : { memo: timer.memo }),
+    ...(timer.referenceUrl === undefined ? {} : { referenceUrls: [timer.referenceUrl] }),
+    startAt: timer.startAt,
+    endAt,
+    durationMinutes,
+    source: "timer",
+  };
+}
+
 function normalizeManualTimeBand(input: ManualTimeEntryInput): {
   readonly startAt: Date;
   readonly endAt: Date;
@@ -188,6 +396,13 @@ export interface Organization {
   readonly id: string;
   readonly name: string;
   readonly activityTypes: readonly ActivityType[];
+  readonly unclassifiedProject: UnclassifiedProject;
+}
+
+export interface UnclassifiedProject {
+  readonly id: string;
+  readonly name: string;
+  readonly billable: false;
 }
 
 export interface CreateOrganizationInput {
@@ -234,6 +449,11 @@ export function createOrganization(input: CreateOrganizationInput): Organization
     id: input.id,
     name: input.name,
     activityTypes: DEFAULT_ACTIVITY_TYPES.map((activityType) => ({ ...activityType })),
+    unclassifiedProject: {
+      id: `${input.id}:unclassified`,
+      name: "Unclassified",
+      billable: false,
+    },
   };
 }
 
