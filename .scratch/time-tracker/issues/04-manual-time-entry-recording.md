@@ -1,6 +1,6 @@
 # 04 — 手動入力の稼働レコード
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 1
 Labels: ready-for-agent, phase-1, time-entry
@@ -20,10 +20,10 @@ Let a member manually create a 稼働レコード by specifying either a time ba
 
 ## Acceptance criteria
 
-- [ ] Given a valid 案件, When a member enters only duration and end time, Then the 稼働レコード is saved with normalized `startAt` / `endAt`.
-- [ ] Given missing 案件, When a member tries to save, Then the save is rejected before persistence.
-- [ ] Given an existing 稼働レコード for the same user, When a new normalized 時間帯 overlaps, Then the save is rejected.
-- [ ] Given another user's overlapping 時間帯, When the member saves their own record, Then it is allowed.
+- [x] Given a valid 案件, When a member enters only duration and end time, Then the 稼働レコード is saved with normalized `startAt` / `endAt`.
+- [x] Given missing 案件, When a member tries to save, Then the save is rejected before persistence.
+- [x] Given an existing 稼働レコード for the same user, When a new normalized 時間帯 overlaps, Then the save is rejected.
+- [x] Given another user's overlapping 時間帯, When the member saves their own record, Then it is allowed.
 
 ## Blocked by
 
