@@ -1,6 +1,6 @@
 # 03 — クライアント, 案件, 作業種別, タグ
 
-Status: ready-for-agent
+Status: implemented
 Type: AFK
 Phase: 1
 Labels: ready-for-agent, phase-1, domain
@@ -20,10 +20,10 @@ Allow an authorized user to create and manage the minimum master data needed bef
 
 ## Acceptance criteria
 
-- [ ] Given an Admin, When they create a クライアント and 案件, Then the 案件 belongs to the クライアント and can be selected for recording.
-- [ ] Given a public 案件, When any member in the Org records time, Then 記録範囲 allows it without granting 閲覧権限 to other members.
-- [ ] Given an assignment-limited 案件, When an unassigned member tries to record time, Then the save is rejected.
-- [ ] Given the global 作業種別 template, When a new Org is initialized, Then the 9 default activity types are available and can be overridden or disabled downstream.
+- [x] Given an Admin, When they create a クライアント and 案件, Then the 案件 belongs to the クライアント and can be selected for recording.
+- [x] Given a public 案件, When any member in the Org records time, Then 記録範囲 allows it without granting 閲覧権限 to other members.
+- [x] Given an assignment-limited 案件, When an unassigned member tries to record time, Then the save is rejected.
+- [x] Given the global 作業種別 template, When a new Org is initialized, Then the 9 default activity types are available and can be overridden or disabled downstream.
 
 ## Blocked by
 
