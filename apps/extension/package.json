@@ -1,0 +1,13 @@
+{
+  "name": "@time-tracker/chrome-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/validate-manifest.mjs",
+    "dev": "node scripts/validate-manifest.mjs",
+    "lint": "node scripts/validate-manifest.mjs",
+    "test": "node scripts/validate-manifest.mjs",
+    "typecheck": "node scripts/validate-manifest.mjs"
+  }
+}

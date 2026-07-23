@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: time-tracker
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/kurotch-homelab/time-tracker.git
+    targetRevision: main
+    path: deploy/chart
+    helm:
+      releaseName: time-tracker
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: time-tracker
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

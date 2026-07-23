@@ -1,0 +1,11 @@
+:root { color: #172554; font-family: system-ui, sans-serif; }
+body { width: 20rem; margin: 0; }
+main { padding: 1rem; }
+h1 { margin: 0 0 .75rem; font-size: 1.2rem; }
+label { display: block; margin-bottom: .35rem; font-weight: 600; }
+input { width: 100%; box-sizing: border-box; padding: .5rem; }
+button { margin-top: .75rem; padding: .5rem .75rem; color: white; background: #1d4ed8; border: 0; border-radius: .25rem; }
+.link-button { color: #1d4ed8; background: transparent; padding-left: 0; }
+.muted { color: #475569; font-size: .85rem; overflow-wrap: anywhere; }
+#status { min-height: 1.25rem; color: #b91c1c; }
+.privacy-note { border-top: 1px solid #cbd5e1; padding-top: .75rem; }

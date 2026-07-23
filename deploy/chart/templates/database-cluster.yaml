@@ -1,0 +1,20 @@
+{{- if .Values.database.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.database.name }}
+  labels:
+    {{- include "time-tracker.labels" . | nindent 4 }}
+spec:
+  instances: {{ .Values.database.instances }}
+  imageName: {{ .Values.database.imageName }}
+  bootstrap:
+    initdb:
+      database: {{ .Values.database.database }}
+      owner: {{ .Values.database.owner }}
+      secret:
+        name: {{ .Values.database.ownerSecretName }}
+  storage:
+    size: {{ .Values.database.storageSize }}
+    storageClass: {{ .Values.database.storageClass }}
+{{- end }}

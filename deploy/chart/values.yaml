@@ -1,0 +1,50 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/kurotch-homelab/time-tracker
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 3000
+
+ingress:
+  host: time-tracker.apps.silver-vine.jp
+  entryPoint: websecure
+
+runtime:
+  # Keycloak realm issuer. Google Workspace SAML is configured upstream in Keycloak.
+  oidcIssuerUrl: https://sso.services.silver-vine.jp/realms/time-tracker
+  oidcClientId: time-tracker-web
+  oidcOrganizationClaim: organization
+  oidcRoleClaim: roles
+  desktopOrigin: tauri://localhost
+  # Set after Google Workspace distribution has assigned the extension ID.
+  chromeExtensionOrigin: ""
+  sessionLifetimeHours: 24
+  secretName: time-tracker-runtime
+  databaseUrlKey: database-url
+  oidcClientSecretKey: oidc-client-secret
+
+database:
+  enabled: true
+  name: time-tracker-database
+  database: time_tracker
+  owner: time_tracker
+  ownerSecretName: time-tracker-database-owner
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  storageClass: longhorn-static
+  storageSize: 5Gi
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+networkPolicy:
+  traefikNamespace: traefik
+  dnsNamespace: kube-system

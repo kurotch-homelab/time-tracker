@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="popup.css" />
+    <title>Time Tracker</title>
+  </head>
+  <body>
+    <main>
+      <h1>Time Tracker</h1>
+      <p id="page" class="muted">Reading current page…</p>
+      <form id="timer-form">
+        <label for="project-id">Project ID</label>
+        <input id="project-id" name="projectId" maxlength="200" autocomplete="off" required />
+        <button id="start" type="submit">Start timer</button>
+      </form>
+      <button id="sign-in" class="link-button" type="button">Sign in</button>
+      <p id="status" role="alert"></p>
+      <p class="muted privacy-note">Only this tab’s URL and title are sent. Page content is never read.</p>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

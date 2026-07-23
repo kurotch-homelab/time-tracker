@@ -1,0 +1,17 @@
+{
+  "name": "@time-tracker/desktop",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/validate-tauri-config.mjs",
+    "dev": "tauri dev",
+    "lint": "node scripts/validate-tauri-config.mjs",
+    "tauri:build": "tauri build",
+    "test": "node scripts/validate-tauri-config.mjs",
+    "typecheck": "node scripts/validate-tauri-config.mjs"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.8.4"
+  }
+}

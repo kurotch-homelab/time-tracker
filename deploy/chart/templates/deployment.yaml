@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "time-tracker.fullname" . }}
+  labels:
+    {{- include "time-tracker.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "time-tracker.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "time-tracker.selectorLabels" . | nindent 8 }}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.runtime.secretName }}
+                  key: {{ .Values.runtime.databaseUrlKey }}
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.runtime.secretName }}
+                  key: {{ .Values.runtime.oidcClientSecretKey }}
+            - name: PUBLIC_ORIGIN
+              value: "https://{{ .Values.ingress.host }}"
+            - name: OIDC_ISSUER_URL
+              value: {{ .Values.runtime.oidcIssuerUrl | quote }}
+            - name: OIDC_CLIENT_ID
+              value: {{ .Values.runtime.oidcClientId | quote }}
+            - name: OIDC_ORGANIZATION_CLAIM
+              value: {{ .Values.runtime.oidcOrganizationClaim | quote }}
+            - name: OIDC_ROLE_CLAIM
+              value: {{ .Values.runtime.oidcRoleClaim | quote }}
+            - name: DESKTOP_ORIGIN
+              value: {{ .Values.runtime.desktopOrigin | quote }}
+            {{- if .Values.runtime.chromeExtensionOrigin }}
+            - name: CHROME_EXTENSION_ORIGIN
+              value: {{ .Values.runtime.chromeExtensionOrigin | quote }}
+            {{- end }}
+            - name: SESSION_LIFETIME_HOURS
+              value: {{ .Values.runtime.sessionLifetimeHours | quote }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            failureThreshold: 30
+            periodSeconds: 2
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5

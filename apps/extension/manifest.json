@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Time Tracker",
+  "version": "0.1.0",
+  "description": "Start an organization timer from the current page without collecting page content.",
+  "permissions": ["activeTab"],
+  "host_permissions": ["https://time-tracker.apps.silver-vine.jp/*"],
+  "action": {
+    "default_title": "Time Tracker",
+    "default_popup": "popup.html"
+  }
+}
