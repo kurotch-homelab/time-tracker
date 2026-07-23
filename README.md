@@ -94,7 +94,10 @@ Sealed Secrets workflow; do not add plaintext Secret manifests to this repo.
 
 `deploy/argocd-application.example.yaml` is deliberately an example rather
 than a change to the separate Argo CD repository. Copy/adapt it there after the
-image repository and sealed secrets exist.
+image repository and sealed secrets exist. The `Container image` workflow
+publishes `ghcr.io/kurotch-homelab/time-tracker` on `main` and version tags;
+keep that GHCR package public, or add an image-pull secret and update the Helm
+chart before deploying it.
 
 ## Desktop builds
 
