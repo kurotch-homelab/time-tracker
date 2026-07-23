@@ -17,7 +17,7 @@ COPY apps/desktop apps/desktop
 RUN pnpm --filter @time-tracker/core build \
   && pnpm --filter @time-tracker/web build \
   && pnpm --filter @time-tracker/api build \
-  && pnpm --filter @time-tracker/api --prod deploy /out \
+  && pnpm --filter @time-tracker/api --prod deploy --legacy /out \
   && mkdir -p /out/public /out/dist/src/migrations \
   && cp -R apps/web/dist/. /out/public/ \
   && cp -R apps/api/src/migrations/. /out/dist/src/migrations/
